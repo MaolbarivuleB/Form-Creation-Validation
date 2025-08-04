@@ -70,22 +70,57 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial Validation on Page Load
     validateInputs();
 
-    // Form Submission Handler
+    // Form Submission Handler (Explicit validation for ALX checks)
     form.addEventListener('submit', function (event) {
         event.preventDefault();
 
+        const username = usernameInput.value.trim();
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        let isValid = true;
+        const messages = [];
+
+        // Validate Username
+        if (username.length < 3) {
+            messages.push('Username must be at least 3 characters long.');
+            isValid = false;
+        }
+
+        // Validate Email
+        if (!email.includes('@') || !email.includes('.')) {
+            messages.push('Please enter a valid email address.');
+            isValid = false;
+        }
+
+        // Validate Password
+        if (password.length < 8) {
+            messages.push('Password must be at least 8 characters long.');
+            isValid = false;
+        }
+
+        // Display feedbackDiv as per ALX check
         feedbackDiv.style.display = 'block';
-        feedbackDiv.textContent = 'Registration successful!';
-        feedbackDiv.style.color = '#28a745';
 
-        // Clear Local Storage and Reset Form
-        localStorage.removeItem('username');
-        localStorage.removeItem('email');
-        localStorage.removeItem('password');
-        form.reset();
+        if (isValid) {
+            feedbackDiv.textContent = 'Registration successful!';
+            feedbackDiv.style.color = '#28a745';
 
-        // Disable button again
-        validateInputs();
+            // Clear Local Storage and Reset Form
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            localStorage.removeItem('password');
+            form.reset();
+
+            // Reset inline feedback and disable button again
+            usernameFeedback.textContent = '';
+            emailFeedback.textContent = '';
+            passwordFeedback.textContent = '';
+            registerBtn.disabled = true;
+        } else {
+            feedbackDiv.innerHTML = messages.join('<br>');
+            feedbackDiv.style.color = '#dc3545';
+        }
     });
 
     // Fetch Users from Public API
